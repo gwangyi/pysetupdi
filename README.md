@@ -1,0 +1,2 @@
+# pysetupdi
+Python SetupAPI Wrapper
