@@ -1,5 +1,5 @@
-from .constants import *
-from .structures import *
+from .constants import DevicePropertyKeys, DIOD_INHERIT_CLASSDRVS, DIGCF_PRESENT, DEVPKEY, DIGCF_ALLCLASSES
+from .structures import GUID, DeviceInfoData, DevicePropertyKey
 from .property import Property
 
 import ctypes
@@ -8,6 +8,60 @@ import contextlib
 # noinspection SpellCheckingInspection
 _setupapi = ctypes.WinDLL('setupapi')
 _kernel32 = ctypes.WinDLL('kernel32')
+
+"""
+WINSETUPAPI HDEVINFO SetupDiGetClassDevsW(
+  const GUID *ClassGuid,
+  PCWSTR     Enumerator,
+  HWND       hwndParent,
+  DWORD      Flags
+);
+"""
+_setupapi.SetupDiGetClassDevsW.restype = ctypes.c_void_p
+"""
+WINSETUPAPI BOOL SetupDiDestroyDeviceInfoList(
+  HDEVINFO DeviceInfoSet
+);
+"""
+_setupapi.SetupDiDestroyDeviceInfoList.argtypes = [ctypes.c_void_p]
+"""
+WINSETUPAPI BOOL SetupDiEnumDeviceInfo(
+  HDEVINFO         DeviceInfoSet,
+  DWORD            MemberIndex,
+  PSP_DEVINFO_DATA DeviceInfoData
+);
+"""
+_setupapi.SetupDiEnumDeviceInfo.argtypes = [ctypes.c_void_p, ctypes.c_uint, ctypes.c_void_p]
+"""
+WINSETUPAPI BOOL SetupDiGetDevicePropertyW(
+  HDEVINFO         DeviceInfoSet,
+  PSP_DEVINFO_DATA DeviceInfoData,
+  const DEVPROPKEY *PropertyKey,
+  DEVPROPTYPE      *PropertyType,
+  PBYTE            PropertyBuffer,
+  DWORD            PropertyBufferSize,
+  PDWORD           RequiredSize,
+  DWORD            Flags
+);
+"""
+_setupapi.SetupDiGetDevicePropertyW.argtypes = [ctypes.c_void_p, ctypes.c_void_p, ctypes.c_void_p, ctypes.c_void_p, ctypes.c_void_p, ctypes.c_uint, ctypes.c_void_p, ctypes.c_uint]
+"""
+WINSETUPAPI HDEVINFO SetupDiCreateDeviceInfoList(
+  const GUID *ClassGuid,
+  HWND       hwndParent
+);
+"""
+_setupapi.SetupDiCreateDeviceInfoList.restype = ctypes.c_void_p
+"""
+WINSETUPAPI BOOL SetupDiOpenDeviceInfoW(
+  HDEVINFO         DeviceInfoSet,
+  PCWSTR           DeviceInstanceId,
+  HWND             hwndParent,
+  DWORD            OpenFlags,
+  PSP_DEVINFO_DATA DeviceInfoData
+);
+"""
+_setupapi.SetupDiOpenDeviceInfoW.argtypes = [ctypes.c_void_p, ctypes.c_wchar_p, ctypes.c_void_p, ctypes.c_uint, ctypes.c_void_p]
 
 
 class DeviceType(type):
@@ -29,6 +83,8 @@ class DeviceType(type):
 
 
 class Device(metaclass=DeviceType):
+    pdo_name = ""
+
     """A class of device"""
     def __init__(self, instance_id):
         """
