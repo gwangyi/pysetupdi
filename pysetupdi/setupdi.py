@@ -62,7 +62,17 @@ WINSETUPAPI BOOL SetupDiOpenDeviceInfoW(
 );
 """
 _setupapi.SetupDiOpenDeviceInfoW.argtypes = [ctypes.c_void_p, ctypes.c_wchar_p, ctypes.c_void_p, ctypes.c_uint, ctypes.c_void_p]
-
+"""
+WINSETUPAPI BOOL SetupDiGetDevicePropertyKeys(
+  HDEVINFO         DeviceInfoSet,
+  PSP_DEVINFO_DATA DeviceInfoData,
+  DEVPROPKEY       *PropertyKeyArray,
+  DWORD            PropertyKeyCount,
+  PDWORD           RequiredPropertyKeyCount,
+  DWORD            Flags
+);
+"""
+_setupapi.SetupDiGetDevicePropertyKeys.argtypes = [ctypes.c_void_p, ctypes.c_void_p, ctypes.c_void_p, ctypes.c_uint, ctypes.c_void_p, ctypes.c_uint]
 
 class DeviceType(type):
     def __new__(mcs, what, bases, member):
