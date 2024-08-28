@@ -167,7 +167,7 @@ def _add_parsers():
     def date_parser(buffer):
         t = struct.unpack('d', buffer[:8])[0]
         buf = ctypes.create_string_buffer(16)
-        _oleaut32.VartiantTimeToSystemTime(t, ctypes.byref(buf))
+        _oleaut32.VariantTimeToSystemTime(t, ctypes.byref(buf))
         y, m, _, d, hh, mm, ss, ms = struct.unpack("8H", bytes(buf))
         return datetime.datetime(y, m, d, hh, mm, ss, ms * 1000)
 
